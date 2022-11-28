@@ -2,6 +2,7 @@ let displayValue;
 let num1;
 let num2;
 let operation;
+let equalsFlag;
 init();
 
 function init() {
@@ -9,6 +10,7 @@ function init() {
   num1 = null;
   num2 = null;
   operation = null;
+  equalsFlag = false;
   const buttons = document.querySelectorAll("button");
   const numKeys = [];
   const operKeys = [];
@@ -17,32 +19,38 @@ function init() {
     else if (/btn-oper-/.test(e.id)) operKeys.push(e);
   });
   numKeys.forEach(e => e.addEventListener("click", event => {
+    if (equalsFlag) {
+      displayValue = "";
+      equalsFlag = false;
+    }
     displayValue += e.id.slice(8);
     //trim leading zeros
-    while (displayValue.length>1 && displayValue[0]==="0") displayValue = displayValue.slice(1);
+    while (displayValue.length>1 && displayValue[0]==="0" && displayValue[1]!==".") displayValue = displayValue.slice(1);
     document.querySelector("#display").textContent = displayValue;
   }));
   operKeys.forEach((e) => e.addEventListener("click", event => {
     if (!num1 || !operation) {
       num1 = +displayValue;
       operation = e.id.slice(9);
-      displayValue = 0;
+      displayValue = "0";
     }
     else if (operation==="divide" && +displayValue===0) alert("Dividing by Zero is not allowed!");
     else {
       num2 = +displayValue;
       num1 = operate(operation, +num1, +num2);
-      displayValue = num1;
+      displayValue = num1.toString();
       document.querySelector("#display").textContent = displayValue;
       operation = e.id.slice(9);
-      displayValue = 0;
+      displayValue = "0";
     }
   }));
   document.querySelector("#btn-equals").addEventListener("click", event => {
-    if (operation) {
+    if (operation==="divide" && +displayValue===0) alert("Dividing by Zero is not allowed!");
+    else if (operation) {
+      equalsFlag = true;
       num2 = +displayValue;
       num1 = operate(operation, +num1, +num2);
-      displayValue = num1;
+      displayValue = num1.toString();
       document.querySelector("#display").textContent = displayValue;
       operation = null;
     }
@@ -51,8 +59,18 @@ function init() {
     num1 = null;
     num2 = null;
     operation = null;
-    displayValue = 0;
+    displayValue = "0";
     document.querySelector("#display").textContent = displayValue;
+  });
+  document.querySelector("#btn-decimal").addEventListener("click", event => {
+    if (equalsFlag) {
+      displayValue = "0";
+      equalsFlag = false;
+    }
+    if (displayValue.indexOf(".") < 0) {
+      displayValue += ".";
+      document.querySelector("#display").textContent = displayValue;
+    }
   });
 }
 
@@ -73,10 +91,10 @@ function divide(num1,num2) {
 // Generalized Math Function
 function operate(operator, num1, num2) {
   switch (operator) {
-    case "add": return add(num1,num2);
-    case "subtract": return subtract(num1,num2);
-    case "multiply": return multiply(num1,num2);
-    case "divide": return divide(num1,num2);
+    case "add": return Math.round(add(num1,num2)*10)/10;
+    case "subtract": return Math.round(subtract(num1,num2)*10)/10;
+    case "multiply": return Math.round(multiply(num1,num2)*10)/10;
+    case "divide": return Math.round(divide(num1,num2)*10)/10;
     default: return;
   }
 }
