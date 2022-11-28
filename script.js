@@ -3,6 +3,7 @@ let num1;
 let num2;
 let operation;
 let equalsFlag;
+let operatorFlag;
 init();
 
 function init() {
@@ -11,6 +12,7 @@ function init() {
   num2 = null;
   operation = null;
   equalsFlag = false;
+  operatorFlag = false;
   const buttons = document.querySelectorAll("button");
   const numKeys = [];
   const operKeys = [];
@@ -23,18 +25,20 @@ function init() {
       displayValue = "";
       equalsFlag = false;
     }
+    operatorFlag = false;
     displayValue += e.id.slice(8);
     //trim leading zeros
     while (displayValue.length>1 && displayValue[0]==="0" && displayValue[1]!==".") displayValue = displayValue.slice(1);
     document.querySelector("#display").textContent = displayValue;
   }));
   operKeys.forEach((e) => e.addEventListener("click", event => {
-    if (!num1 || !operation) {
+    if (operatorFlag) operation = e.id.slice(9);
+    else if (!operation) {
       num1 = +displayValue;
       operation = e.id.slice(9);
       displayValue = "0";
     }
-    else if (operation==="divide" && +displayValue===0) alert("Dividing by Zero is not allowed!");
+    else if (operation==="divide" && document.querySelector("#display").textContent==="0") alert("Dividing by Zero is not allowed!");
     else {
       num2 = +displayValue;
       num1 = operate(operation, +num1, +num2);
@@ -43,9 +47,13 @@ function init() {
       operation = e.id.slice(9);
       displayValue = "0";
     }
+    operatorFlag = true;
   }));
   document.querySelector("#btn-equals").addEventListener("click", event => {
-    if (operation==="divide" && +displayValue===0) alert("Dividing by Zero is not allowed!");
+    if (operatorFlag) {
+      return;
+    }
+    else if (operation==="divide" && document.querySelector("#display").textContent==="0") alert("Dividing by Zero is not allowed!");
     else if (operation) {
       equalsFlag = true;
       num2 = +displayValue;
