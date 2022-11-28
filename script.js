@@ -85,6 +85,18 @@ function init() {
       document.querySelector("#display").textContent = displayValue;
     }
   });
+  document.querySelector("#btn-backspace").addEventListener("click", event => {
+    if (equalsFlag || operatorFlag || displayValue.length<=1) {
+      displayValue = "0";
+      document.querySelector("#display").textContent = displayValue;
+    }
+    else {
+      displayValue = displayValue.slice(0,-1);
+      document.querySelector("#display").textContent = displayValue;
+    }
+    equalsFlag = false;
+    operatorFlag = false;
+  });
 }
 
 // Basic Math Functions
