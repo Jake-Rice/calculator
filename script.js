@@ -23,19 +23,37 @@ function init() {
     document.querySelector("#display").textContent = displayValue;
   }));
   operKeys.forEach((e) => e.addEventListener("click", event => {
-    if (!operation) {
+    if (!num1 || !operation) {
       num1 = +displayValue;
+      operation = e.id.slice(9);
+      displayValue = 0;
     }
+    else if (operation==="divide" && +displayValue===0) alert("Dividing by Zero is not allowed!");
     else {
-      num2 = displayValue;
+      num2 = +displayValue;
       num1 = operate(operation, +num1, +num2);
       displayValue = num1;
       document.querySelector("#display").textContent = displayValue;
+      operation = e.id.slice(9);
+      displayValue = 0;
     }
-    operation = e.id.slice(9);
-    displayValue = 0;
-    console.log(num1, operation);
   }));
+  document.querySelector("#btn-equals").addEventListener("click", event => {
+    if (operation) {
+      num2 = +displayValue;
+      num1 = operate(operation, +num1, +num2);
+      displayValue = num1;
+      document.querySelector("#display").textContent = displayValue;
+      operation = null;
+    }
+  });
+  document.querySelector("#btn-clear").addEventListener("click", event => {
+    num1 = null;
+    num2 = null;
+    operation = null;
+    displayValue = 0;
+    document.querySelector("#display").textContent = displayValue;
+  });
 }
 
 // Basic Math Functions
