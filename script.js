@@ -59,6 +59,11 @@ function init() {
       num2 = +displayValue;
       num1 = operate(operation, +num1, +num2);
       displayValue = num1.toString();
+      if (displayValue.includes("e") && displayValue.includes(".")) {
+        displayValue = displayValue.split('');
+        displayValue = displayValue.slice(0, displayValue.indexOf(".")+2).concat(displayValue.slice(displayValue.indexOf("e")));
+        displayValue = displayValue.join('');
+      }
       document.querySelector("#display").textContent = displayValue;
       operation = null;
     }
